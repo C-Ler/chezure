@@ -222,6 +222,8 @@
           [else (mapper index)])))
 
 (define (chezure-captures-string-ref captures index)
+  (unless (chezure-captures? captures)
+    (assertion-violationf 'chezure-captures-string-ref "~a is not a chezurecaptures object" captures))
   (let ([m (chezure-captures-ref captures index)])
     (cond [(list? index) (map chezure-match-str m)]
           [(vector? index) (vector-map chezure-match-str m)]

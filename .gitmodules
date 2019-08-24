@@ -1,0 +1,6 @@
+[submodule "lib/thunderchez"]
+	path = lib/thunderchez
+	url = https://github.com/ovenpasta/thunderchez
+[submodule "lib/regex"]
+	path = lib/regex
+	url = https://github.com/rust-lang/regex

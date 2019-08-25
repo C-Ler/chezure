@@ -6,9 +6,9 @@ os:
   # - linux
   - osx
 
-# env:
-  # global:
-    # - CHEZSCHEMELIBDIRS="${TRAVIS_BUILD_DIR}:${TRAVIS_BUILD_DIR}/thunderchez"    
+env:
+  global:
+    - CHEZSCHEMELIBDIRS="${TRAVIS_BUILD_DIR}:${TRAVIS_BUILD_DIR}/thunderchez"
   
 addons:
   homebrew:
@@ -28,4 +28,4 @@ before_install:
   - petite --script "${TRAVIS_BUILD_DIR}/build.ss"
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR chez --import-notify --libdirs "`pwd`:`pwd`/thunderchez" --script "${TRAVIS_BUILD_DIR}/tests.ss" ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR chez --import-notify  --script "${TRAVIS_BUILD_DIR}/tests.ss" ; fi

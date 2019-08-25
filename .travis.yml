@@ -6,10 +6,9 @@ os:
   # - linux
   - osx
 
-env:
-  global:
-    - CHEZSCHEMELIBDIRS="$TRAVIS_BUILD_DIR:$TRAVIS_BUILD_DIR/thunderchez"
-    - CHEZSCHEMELIBEXTS="ss:sls"
+# env:
+  # global:
+    # - CHEZSCHEMELIBDIRS="${TRAVIS_BUILD_DIR}:${TRAVIS_BUILD_DIR}/thunderchez"    
   
 addons:
   homebrew:
@@ -29,4 +28,4 @@ before_install:
   - petite --script "${TRAVIS_BUILD_DIR}/build.ss"
 
 script:
-  - LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR petite --libdirs "${TRAVIS_BUILD_DIR}:${TRAVIS_BUILD_DIR}/thunderchez" --script "${TRAVIS_BUILD_DIR}/tests.ss"
+  - LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR petite --import-notify --libdirs "`pwd`:`pwd`/thunderchez" --script "${TRAVIS_BUILD_DIR}/tests.ss"

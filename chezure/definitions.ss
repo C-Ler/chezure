@@ -144,7 +144,7 @@
 ;;; Captures
 (define-record-type
     (chezure-captures mk-chezure-captures chezure-captures?)
-  (fields (immutable names)
+  (fields (immutable names %chezure-captures-names)
           (immutable names-index-map)
           (immutable matches)))
 
@@ -175,6 +175,13 @@
                            (not (fxzero? (string-length s))))
                          (reverse! res)))))))
 
+(define (chezure-captures-names x)
+  (cond [(chezure? x)
+         (get-all-captures-names (chezure-ptr x))]
+        [(chezure-captures? x)
+         (%chezure-captures-names x)]
+        [else (errorf "~a is not a chezure or chezure-captures object" x)]))
+
 (define (make-chezure-captures str re* caps*)
   (let* ([len (rure_captures_len caps*)]
          [matches (make-vector len)]
@@ -199,7 +206,7 @@
 (define (chezure-captures-index-valid? captures index)
   (cond [(string? index)
          (and (not (fxzero? (string-length index)))
-              (member index (chezure-captures-names captures)) #t)]
+              (member index (%chezure-captures-names captures)) #t)]
         [(and (fixnum? index)
               (fx<=? 0 index))
          (fx<? index (vector-length (chezure-captures-matches captures)))]

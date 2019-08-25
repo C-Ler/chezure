@@ -171,7 +171,7 @@
          (assertion-violationf 'chezure-has-match? "Illegal start index: ~a" start))
        (%chezure-has-match? chezure str start)]))
 
-;;; Set Matched?
+  ;;; Set Matched?
   (define (%chezure-set-has-match? chezure-set str start)
     (let ([bv (string->utf8 str)])
       (rure_set_is_match (chezure-set-ptr chezure-set)
@@ -266,7 +266,6 @@
                     (fx<? -1 start (string-length str)))
          (assertion-violationf 'chezure-shortest-match "Illegal start index: ~a" start))
        (%chezure-shortest-match chezure str start)]))
-
   
   ;;; Find
   (define (%chezure-find chezure str limit)
@@ -343,16 +342,19 @@
 
   ;;; Split
   (define (%chezure-split chezure str limit preserve?)
+
+    (define bv (string->utf8 str))
+    (define len (bytevector-length bv))
     
     (define (iter matches offset stack)
       (if (null? matches)
-          (reverse! (cons (substring str offset (string-length str))
+          (reverse! (cons (substring-bv8 bv offset len)
                           stack))
           (let* ([m (car matches)]
                  [start (chezure-match-start m)]
                  [end (chezure-match-end m)]
                  [matched (chezure-match-str m)]
-                 [slice (substring str offset start)])
+                 [slice (substring-bv8 bv offset start)])
             (iter (cdr matches) end
                   (if preserve?
                       (cons matched (cons slice stack))
@@ -362,10 +364,6 @@
       (if (null? matches)
           (list)
           (iter matches 0 (list)))))
-
-  (define (string-not-empty? s)
-    (not (or (fxzero? (string-length s))
-             (for-all char-whitespace? (string->list s)))))
 
   (define chezure-split
     (case-lambda
@@ -407,17 +405,20 @@
 
   ;;; Replace
   (define (%chezure-replace chezure str repl limit)
+
+    (define bv (string->utf8 str))
+    (define len (bytevector-length bv))
     
     (define (iter all offset stack)
       (if (null? all)
-          (reverse! (cons (substring str offset (string-length str))
+          (reverse! (cons (substring-bv8 bv offset len)
                           stack))
           (let* ([caps (car all)]
                  [m (vector-ref (chezure-captures-matches caps) 0)]
                  [start (chezure-match-start m)]
                  [end (chezure-match-end m)]
                  [matched (chezure-match-str m)]
-                 [slice (substring str offset start)]
+                 [slice (substring-bv8 bv offset start)]
                  [replacement (if (string? repl)
                                   repl
                                   (repl caps))])

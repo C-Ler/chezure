@@ -1,0 +1,9 @@
+BASE_URL="https://github.com/cisco/ChezScheme/releases/download"
+CHEZ_VERSION="9.5.2"
+CHEZ_FILE="csv${CHEZ_VERSION}.tar.gz"
+aria2c "${BASE_URL}/v${CHEZ_VERSION}/${CHEZ_FILE}"
+tar zxf $CHEZ_FILE
+cd ${CHEZ_FILE}
+./configure --64 --threads --disable-x11
+make
+sudo make install

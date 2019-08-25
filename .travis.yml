@@ -1,0 +1,30 @@
+language: rust
+
+sudo: required
+
+os:
+  - linux
+  - osx
+
+env:
+  global:
+    - CHEZSCHEMELIBDIRS="$HOME/Chezure:$HOME/Chezure/thunderchez"
+    - CHEZSCHEMELIBEXTS="ss:sls"
+  
+addons:
+  apt:
+    packages:
+      - aria2
+      - libncurses5-dev
+      - libgmp-dev
+      - libffi-dev
+      - uuid-dev
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update  
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install chezscheme
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] ./travis/install_chez
+  - petite --script "${TRAVIS_BUILD_DIR}/build.ss"
+
+script:
+  - LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR petite --script "${TRAVIS_BUILD_DIR}/tests.ss"

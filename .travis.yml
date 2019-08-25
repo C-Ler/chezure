@@ -8,7 +8,7 @@ os:
 
 env:
   global:
-    - CHEZSCHEMELIBDIRS="$HOME/Chezure:$HOME/Chezure/thunderchez"
+    - CHEZSCHEMELIBDIRS="$TRAVIS_BUILD_DIR:$TRAVIS_BUILD_DIR/thunderchez"
     - CHEZSCHEMELIBEXTS="ss:sls"
   
 addons:
@@ -21,9 +21,9 @@ addons:
       - uuid-dev
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update  
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install chezscheme
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] ./travis/install_chez
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update             ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install chezscheme ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] ./travis/install_chez       ; fi
   - petite --script "${TRAVIS_BUILD_DIR}/build.ss"
 
 script:

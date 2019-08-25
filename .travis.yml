@@ -13,18 +13,12 @@ env:
   
 addons:
   apt:
-    packages:
-      # - aria2
-      # - libncurses5-dev
-      # - libgmp-dev
-      # - libffi-dev
-      # - uuid-dev
-      - chezscheme
+    update: true
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update             ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install chezscheme ; fi
-  # - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then /bin/bash -e ./travis/install_chez ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update                          ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install chezscheme              ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y chezscheme ; fi
   - petite --script "${TRAVIS_BUILD_DIR}/build.ss"
 
 script:

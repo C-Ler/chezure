@@ -18,6 +18,16 @@
          (lambda () body)
          (lambda () cleanup ...))]))
 
+  (define (string-not-empty? s)
+    (not (or (fxzero? (string-length s))
+             (for-all char-whitespace? (string->list s)))))
+
+  (define (substring-bv8 bv start end)
+    (let* ([len (fx- end start)]
+           [new-bv (make-bytevector len)])
+      (bytevector-copy! bv start new-bv 0 len)
+      (utf8->string new-bv)))
+
   (include "definitions.ss")
 
   ;;; FIXME: better approaches to handle GC?

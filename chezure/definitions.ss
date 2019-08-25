@@ -58,11 +58,13 @@
                       (chezure-match-str r))
               p))))
 
+;;; FIXME: instead of allocating a u8 vector everytime, it should take a bytevector as arg
+;;; start and end could be index as in the bytevector, not string
 (define (make-chezure-match str m*)
   (let ([start (ftype-ref rure_match (start) m*)]
         [end (ftype-ref rure_match (end) m*)])
     (mk-chezure-match
-     start end (substring str start end))))
+     start end (substring-bv8 (string->utf8 str) start end))))
 
 (define (chezure-match->alist m)
   (list (cons 'start (chezure-match-start m))

@@ -30,5 +30,4 @@ before_install:
   - petite --script "${TRAVIS_BUILD_DIR}/build.ss"
 
 script:
-  - chez --script "${TRAVIS_BUILD_DIR}/tests.ss
-  
+  - LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR chez --script "${TRAVIS_BUILD_DIR}/tests.ss

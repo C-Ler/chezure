@@ -14,10 +14,17 @@
    rure_compile_set rure_set_free rure_set_is_match rure_set_matches rure_set_len
    rure_error_new rure_error_free rure_error_message
    rure_escape_must rure_cstring_free)
-  (import (rnrs base)
-          (only (chezscheme)
-                fxsll foreign-procedure define-ftype make-ftype-pointer
-                foreign-alloc foreign-free ftype-sizeof ftype-pointer-address))
+  (import (chezscheme))
+
+  (define librure
+    (case (machine-type)
+      ((a6nt ta6nt) "rure.dll")
+      ((a6le i3le ta6le ti3le) "librure.so")
+      ((a6osx i3osx ta6osx ti3osx) "librure.dylib")
+      (else "librure.so")))
+
+  ;;; FIXME: need to find a way to load the shared library  
+  (define loaded? (load-shared-object "D:\\projects\\chezure\\rure.dll"))
 
   ;;; The case insensitive (i) flag.
   (define RURE_FLAG_CASEI (fxsll 1 0))

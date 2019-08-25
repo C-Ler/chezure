@@ -9,15 +9,5 @@
           chezure-find chezure-find-captures chezure-split chezure-replace)
   (import (chezure low-level)
           (chezure api)
-          (chezscheme))   
+          (chezscheme)) 
   )
-
-(define librure
-  (case (machine-type)
-    ((a6nt ta6nt) "rure.dll")
-    ((a6le i3le ta6le ti3le) "librure.so")
-    ((a6osx i3osx ta6osx ti3osx) "librure.so")
-    (else (void))))
-
-;;; FIXME: need to find a way to load the shared library
-;; (load-shared-object (string-append "./" librure)

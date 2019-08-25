@@ -3,7 +3,7 @@ language: rust
 sudo: required
 
 os:
-  - linux
+  # - linux
   - osx
 
 env:
@@ -12,8 +12,17 @@ env:
     - CHEZSCHEMELIBEXTS="ss:sls"
   
 addons:
+  homebrew:
+    update: true
+    packages:
+      - chezscheme   
   apt:
     update: true
+    packages:
+      - libncurses5-dev
+      - libgmp-dev
+      - libffi-dev
+      - uuid-dev
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update                             ; fi

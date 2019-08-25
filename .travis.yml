@@ -30,6 +30,5 @@ before_install:
   - petite --script "${TRAVIS_BUILD_DIR}/build.ss"
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR chez   --script "${TRAVIS_BUILD_DIR}/tests.ss" ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR scheme --script "${TRAVIS_BUILD_DIR}/tests.ss" ; fi
-  # - build ...
+  - chez --script "${TRAVIS_BUILD_DIR}/tests.ss
+  

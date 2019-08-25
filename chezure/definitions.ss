@@ -143,17 +143,17 @@
 
 ;;; Captures
 (define-record-type
-    (chezure-captures mk-chezure-captures chezure-captures?)
-  (fields (immutable names %chezure-captures-names)
+    (captures mk-captures captures?)
+  (fields (immutable names %captures-names)
           (immutable names-index-map)
           (immutable matches)))
 
 (module ()
   (record-writer
-   (type-descriptor chezure-captures)
+   (type-descriptor captures)
    (lambda (r p wr)
-     (display (format "#<chezure-captures, ~d groups>"
-                      (vector-length (chezure-captures-matches r)))
+     (display (format "#<captures, ~d groups>"
+                      (vector-length (captures-matches r)))
               p))))
 
 (define (get-all-captures-names re*)
@@ -175,14 +175,14 @@
                            (not (fxzero? (string-length s))))
                          (reverse! res)))))))
 
-(define (chezure-captures-names x)
+(define (captures-names x)
   (cond [(chezure? x)
          (get-all-captures-names (chezure-ptr x))]
-        [(chezure-captures? x)
-         (%chezure-captures-names x)]
-        [else (errorf "~a is not a chezure or chezure-captures object" x)]))
+        [(captures? x)
+         (%captures-names x)]
+        [else (errorf "~a is not a chezure or captures object" x)]))
 
-(define (make-chezure-captures str re* caps*)
+(define (make-captures str re* caps*)
   (let* ([len (rure_captures_len caps*)]
          [matches (make-vector len)]
          [m* (rure_match_new)]
@@ -196,44 +196,44 @@
                 ;; the caller is responsible for releasing caps*
                 ;; (rure_captures_free caps*)
                 ;; so this API won't be exposed from the library
-                (mk-chezure-captures
+                (mk-captures
                  names
                  (map (lambda (n i) (cons n i)) names indices)
                  matches)))                       
       (rure_captures_at caps* i m*)
       (vector-set! matches i (make-chezure-match str m*)))))
 
-(define (chezure-captures-index-valid? captures index)
+(define (captures-index-valid? captures index)
   (cond [(string? index)
          (and (not (fxzero? (string-length index)))
-              (member index (%chezure-captures-names captures)) #t)]
+              (member index (%captures-names captures)) #t)]
         [(and (fixnum? index)
               (fx<=? 0 index))
-         (fx<? index (vector-length (chezure-captures-matches captures)))]
+         (fx<? index (vector-length (captures-matches captures)))]
         [else #f]))
 
-(define chezure-captures-ref/1
+(define captures-ref/1
   (lambda (captures)
     (lambda (index)
-      (unless (chezure-captures-index-valid? captures index)
-        (assertion-violationf 'chezure-captures-ref "Invalid index: ~a" index))  
+      (unless (captures-index-valid? captures index)
+        (assertion-violationf 'captures-ref "Invalid index: ~a" index))  
       (if (string? index)
-          (vector-ref (chezure-captures-matches captures)
-                      (cdr (assoc index (chezure-captures-names-index-map captures))))
-          (vector-ref (chezure-captures-matches captures) index)))))
+          (vector-ref (captures-matches captures)
+                      (cdr (assoc index (captures-names-index-map captures))))
+          (vector-ref (captures-matches captures) index)))))
 
-(define (chezure-captures-ref captures index)
-  (unless (chezure-captures? captures)
-    (assertion-violationf 'chezure-captures-ref "~a is not a chezurecaptures object" captures))
-  (let ([mapper (chezure-captures-ref/1 captures)])
+(define (captures-ref captures index)
+  (unless (captures? captures)
+    (assertion-violationf 'captures-ref "~a is not a chezurecaptures object" captures))
+  (let ([mapper (captures-ref/1 captures)])
     (cond [(list? index) (map mapper index)]
           [(vector? index) (vector-map mapper index)]
           [else (mapper index)])))
 
-(define (chezure-captures-string-ref captures index)
-  (unless (chezure-captures? captures)
-    (assertion-violationf 'chezure-captures-string-ref "~a is not a chezurecaptures object" captures))
-  (let ([m (chezure-captures-ref captures index)])
+(define (captures-string-ref captures index)
+  (unless (captures? captures)
+    (assertion-violationf 'captures-string-ref "~a is not a chezurecaptures object" captures))
+  (let ([m (captures-ref captures index)])
     (cond [(list? index) (map chezure-match-str m)]
           [(vector? index) (vector-map chezure-match-str m)]
           [else (chezure-match-str m)])))

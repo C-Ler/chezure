@@ -3,7 +3,7 @@
   (export chezure-flag chezure-flags make-chezure-options chezure-options?
           chezure-match? chezure-match-start chezure-match-end chezure-match-str chezure-match->alist
           chezure? chezure-set? chezure-set-len
-          chezure-captures? chezure-captures-names chezure-captures-ref chezure-captures-string-ref
+          captures? captures-names captures-ref captures-string-ref
           chezure-compile chezure-compile-set chezure-escape
           chezure-has-match?  chezure-set-has-match? chezure-set-matches chezure-shortest-match
           chezure-find chezure-find-captures chezure-split chezure-replace)
@@ -317,7 +317,7 @@
                      (fx<? i limit))
                  (rure_iter_next_captures iter* bv len caps*))
             (loop (fx1+ i)
-                  (cons (make-chezure-captures str re* caps*) res))
+                  (cons (make-captures str re* caps*) res))
             (begin (rure_captures_free caps*)
                    (rure_iter_free iter*)
                    (reverse! res))))))
@@ -414,7 +414,7 @@
           (reverse! (cons (substring-bv8 bv offset len)
                           stack))
           (let* ([caps (car all)]
-                 [m (vector-ref (chezure-captures-matches caps) 0)]
+                 [m (vector-ref (captures-matches caps) 0)]
                  [start (chezure-match-start m)]
                  [end (chezure-match-end m)]
                  [matched (chezure-match-str m)]

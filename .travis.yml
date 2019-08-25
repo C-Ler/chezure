@@ -23,7 +23,7 @@ addons:
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update             ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install chezscheme ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] ./travis/install_chez       ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] then ./travis/install_chez       ; fi
   - petite --script "${TRAVIS_BUILD_DIR}/build.ss"
 
 script:

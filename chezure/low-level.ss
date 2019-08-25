@@ -16,16 +16,6 @@
    rure_escape_must rure_cstring_free)
   (import (chezscheme))
 
-  (define librure
-    (case (machine-type)
-      ((a6nt ta6nt) "rure.dll")
-      ((a6le i3le ta6le ti3le) "librure.so")
-      ((a6osx i3osx ta6osx ti3osx) "librure.dylib")
-      (else "librure.so")))
-
-  ;;; FIXME: need to find a way to load the shared library  
-  (define loaded? (load-shared-object "D:\\projects\\chezure\\rure.dll"))
-
   ;;; The case insensitive (i) flag.
   (define RURE_FLAG_CASEI (fxsll 1 0))
   ;;; /* The multi-line matching (m) flag. (^ and $ match new line boundaries.)

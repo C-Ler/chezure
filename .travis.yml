@@ -3,7 +3,7 @@ language: rust
 sudo: required
 
 os:
-  # - linux
+  - linux
   - osx
 
 env:
@@ -22,10 +22,13 @@ addons:
       - libgmp-dev
       - libffi-dev
       - uuid-dev
+      - zlib1g-dev
 
 before_install:
-  # - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y chezscheme9.5 ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then /bin/bash -e ./.travis/install_chez ; fi
   - petite --script "${TRAVIS_BUILD_DIR}/build.ss"
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR chez --import-notify  --script "${TRAVIS_BUILD_DIR}/tests.ss" ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR chez   --script "${TRAVIS_BUILD_DIR}/tests.ss" ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR scheme --script "${TRAVIS_BUILD_DIR}/tests.ss" ; fi
+  # - build ...

@@ -3,7 +3,7 @@
 
 (check-set-mode! 'report-failed)
 
-(load-librure (format "./~a" librure))
+(load-librure)
 
 (define re (chezure-compile "[a-z]+"))
 (define re-i (chezure-compile "[a-z]+" (chezure-flags ignorecase unicode)))

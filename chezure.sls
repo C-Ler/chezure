@@ -7,7 +7,7 @@
           chezure-compile chezure-compile-set chezure-escape
           chezure-has-match?  chezure-set-has-match? chezure-set-matches chezure-shortest-match
           chezure-find chezure-find-captures chezure-split chezure-replace
-          librure load-librure)
+          load-librure)
   (import (chezure low-level)
           (chezure api)
           (chezscheme))

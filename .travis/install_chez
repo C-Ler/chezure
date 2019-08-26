@@ -4,7 +4,7 @@ CHEZ_FILE="csv${CHEZ_VERSION}"
 aria2c "${BASE_URL}/v${CHEZ_VERSION}/${CHEZ_FILE}.tar.gz"
 tar zxf "${CHEZ_FILE}.tar.gz"
 pushd $CHEZ_FILE
-./configure --64 --threads --disable-x11 -m=ta6le --installschemename=chez
+CC=cc ./configure --64 --threads --disable-curses --disable-x11 --installschemename=scheme
 make
 sudo make install
 popd

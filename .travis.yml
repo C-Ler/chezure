@@ -12,9 +12,9 @@ env:
   
 addons:
   homebrew:
-    update: true
+    update: false
     packages:
-      - chezscheme   
+      - aria2
   apt:
     update: true
     packages:
@@ -26,8 +26,9 @@ addons:
       - aria2
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then /bin/bash -e ./.travis/install_chez ; fi
+  # - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then /bin/bash -e ./.travis/install_chez ; fi
+  - /bin/bash -e ./.travis/install_chez
   - petite --script "${TRAVIS_BUILD_DIR}/build.ss"
 
 script:
-  - LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR chez --script "${TRAVIS_BUILD_DIR}/tests.ss"
+  - scheme --script "${TRAVIS_BUILD_DIR}/tests.ss"

@@ -12,9 +12,11 @@ env:
   
 addons:
   homebrew:
-    update: false
+    update: true
     packages:
       - aria2
+      - ncurses
+      - ossp-uuid
   apt:
     update: true
     packages:

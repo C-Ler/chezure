@@ -81,29 +81,12 @@
    (lambda (r p wr)
      (display
       (format "#<chezure @~x>" (chezure-ptr r))
-      p))))
-  
-;; (define make-chezure
-;;   (let ([g (make-guardian)])
-;;     (lambda (ptr)
-;;       (do ([i 0 (fx1+ i)]
-;;            [re (g) (g)])
-;;           ((or (not re)
-;;                (fx=? i 8)) ;; free 8 objects at most
-;;            ;; return
-;;            (let ([re (mk-chezure ptr)])
-;;              (g re)
-;;              re))
-;;         (rure_free (chezure-ptr re))
-;;         ;; (display (format "~a dropped.~%" re))
-;;         ))))
+      p)))) 
 
-(define chezure-guardian (make-guardian))
-
-(define (make-chezure ptr)
-  (let ([re (mk-chezure ptr)])
-    (chezure-guardian re)
-    re))
+(define (make-chezure ptr)    
+  (finalize (mk-chezure ptr)
+            (lambda (re)
+              (rure_free (chezure-ptr re)))))
 
 ;;; Compile Set
 (define-record-type (chezure-set mk-chezure-set chezure-set?)
@@ -118,28 +101,10 @@
               (chezure-set-ptr r) (chezure-set-len r))
     p))))
 
-;; (define make-chezure-set
-;;   (let ([g (make-guardian)])
-;;     (lambda (ptr len)
-;;       (do ([i 0 (fx1+ i)]
-;;            [re-set (g) (g)])
-;;           ((or (not re-set)
-;;                (fx=? i 8)) ;; free 8 objects at most
-;;            ;; return
-;;            (let ([re-set (mk-chezure-set ptr len)])
-;;              (g re-set)
-;;              re-set))
-;;         (rure_set_free (chezure-set-ptr re-set))
-;;         ;; (display (format "~a dropped~%"))
-;;         ))))
-
-(define chezure-set-guardian (make-guardian))
-
-(define make-chezure-set
-  (lambda (ptr len)
-    (let ([re-set (mk-chezure-set ptr len)])
-      (chezure-set-guardian re-set)
-      re-set)))
+(define (make-chezure-set ptr len)
+  (finalize (mk-chezure-set ptr len)
+            (lambda (re-set)
+              (rure_set_free (chezure-set-ptr re-set)))))
 
 ;;; Captures
 (define-record-type

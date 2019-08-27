@@ -8,6 +8,7 @@
           chezure-has-match?  chezure-set-has-match? chezure-set-matches chezure-shortest-match
           chezure-find chezure-find-captures chezure-split chezure-replace)
   (import (chezscheme)
+          (only (finalize) finalize)
           (chezure low-level))
 
   (define-syntax unwind-protect
@@ -29,25 +30,6 @@
       (utf8->string new-bv)))
 
   (include "definitions.ss")
-
-  ;;; FIXME: better approaches to handle GC?
-  (module ()
-    (collect-request-handler
-     (lambda ()
-       (collect)
-       ;; collect chezure
-       (do ([re (chezure-guardian) (chezure-guardian)])
-           ((not re))
-         (rure_free (chezure-ptr re))
-         ;; (display (format "~a dropped~%" re)))
-         )
-       ;; collect chezure-set
-       (do ([re-set (chezure-set-guardian) (chezure-set-guardian)])
-           ((not re-set))
-         (rure_set_free (chezure-set-ptr re-set))
-         ;; (display (format "~a dropped~%" re-set)))
-         )
-       )))
 
   ;;; Compile
   (define (%chezure-compile pattern flags options)

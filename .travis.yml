@@ -8,7 +8,7 @@ os:
 
 env:
   global:
-    - CHEZSCHEMELIBDIRS="${TRAVIS_BUILD_DIR}:${TRAVIS_BUILD_DIR}/thunderchez"
+    - CHEZSCHEMELIBDIRS="${TRAVIS_BUILD_DIR}:${TRAVIS_BUILD_DIR}/finalize:${TRAVIS_BUILD_DIR}/thunderchez"
   
 addons:
   homebrew:
@@ -27,12 +27,10 @@ addons:
       - zlib1g-dev
       - aria2
 
-before_install:
-  # - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then /bin/bash -e ./.travis/install_chez ; fi
+before_install:  
   - /bin/bash -e ./.travis/install_chez
   - scheme --script "${TRAVIS_BUILD_DIR}/build.ss"
 
 script:
   - scheme --script "${TRAVIS_BUILD_DIR}/tests.ss"
-  # - mkdir build
-  # - mv chezure.so ./build; mv librure.* ./build  
+  

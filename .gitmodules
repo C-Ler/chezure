@@ -4,3 +4,6 @@
 [submodule "thunderchez"]
 	path = thunderchez
 	url = https://github.com/ovenpasta/thunderchez.git
+[submodule "chez-finalize"]
+	path = chez-finalize
+	url = https://github.com/macdavid313/chez-finalize.git

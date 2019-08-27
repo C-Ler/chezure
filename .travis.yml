@@ -46,7 +46,7 @@ deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
   file: 
-    - $DEPLOY_FILE.zip.zip
+    - $DEPLOY_FILE.zip
     - $DEPLOY_FILE.tar.gz
   skip_cleanup: true
   # on:

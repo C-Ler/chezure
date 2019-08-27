@@ -3,8 +3,6 @@
 
 (check-set-mode! 'report-failed)
 
-(load-librure (format "./~a" librure))
-
 (define re (chezure-compile "[a-z]+"))
 (define re-i (chezure-compile "[a-z]+" (chezure-flags ignorecase unicode)))
 (define re-unicode (chezure-compile "中国|香港"))

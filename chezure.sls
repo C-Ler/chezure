@@ -8,6 +8,7 @@
           chezure-has-match? chezure-set-has-match? chezure-set-matches chezure-shortest-match
           chezure-find chezure-find-captures chezure-split chezure-replace)
   (import (chezure low-level)
+          (chezure definitions)
           (chezure api)
           (chezscheme))
   )

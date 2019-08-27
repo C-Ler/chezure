@@ -1,64 +1,27 @@
 ;;;; api.ss
 (library (chezure api)
-  (export chezure-flag chezure-flags make-chezure-options chezure-options?
-          chezure-match? chezure-match-start chezure-match-end chezure-match-str chezure-match->alist
-          chezure? chezure-set? chezure-set-len
-          captures? captures-names captures-ref captures-string-ref
-          chezure-compile chezure-compile-set chezure-escape
-          chezure-has-match?  chezure-set-has-match? chezure-set-matches chezure-shortest-match
-          chezure-find chezure-find-captures chezure-split chezure-replace)
+  (export chezure-compile chezure-compile-set chezure-escape
+          chezure-has-match? chezure-set-has-match? chezure-set-matches chezure-shortest-match
+          chezure-find chezure-find-captures chezure-split chezure-replace
+          ;; Low-level APIs
+          RURE_FLAG_CASEI RURE_FLAG_MULTI RURE_FLAG_DOTNL
+          RURE_FLAG_SWAP_GREED RURE_FLAG_SPACE RURE_FLAG_UNICODE RURE_DEFAULT_FLAGS
+          rure_match rure_match_new rure_match_free
+          rure_compile_must rure_compile rure_free rure_is_match rure_find rure_find_captures
+          rure_shortest_match rure_capture_name_index
+          rure_iter_capture_names_new rure_iter_capture_names_free rure_iter_capture_names_next
+          rure_iter_new rure_iter_free rure_iter_next rure_iter_next_captures
+          rure_captures_new rure_captures_free rure_captures_at rure_captures_len
+          rure_options_new rure_options_free rure_options_size_limit rure_options_dfa_size_limit
+          rure_compile_set rure_set_free rure_set_is_match rure_set_matches rure_set_len
+          rure_error_new rure_error_free rure_error_message
+          rure_escape_must rure_cstring_free)
   (import (chezscheme)
           (only (finalize) finalize)
-          (chezure low-level))
-
-  (define-syntax unwind-protect
-    (syntax-rules ()
-      [(_ body cleanup ...)
-       (dynamic-wind
-         (lambda () #f)
-         (lambda () body)
-         (lambda () cleanup ...))]))    
-
-  (define (string-not-empty? s)
-    (not (or (fxzero? (string-length s))
-             (for-all char-whitespace? (string->list s)))))
-
-
-  ;;; get the corresponding byte index from a given UTF-8 string
-  ;;; FIXME: maybe there's a better way to do it?
-  (define (make-index-map str)
-    (define len (string-length str))
-    (define indices (make-fxvector len))
-    (let loop ([sum 0]
-               [i 0])
-      (if (fx=? i len)
-          indices
-          (let ([c (char->integer (string-ref str i))])
-            (fxvector-set! indices i sum)
-            (when (fx>? c #x10000)
-              (set! i (fx1+ i))
-              (fxvector-set! indices i sum))
-            (loop (cond [(fx<=? c #x7F) (fx1+ sum)]
-                        [(fx<=? c #x7FF) (fx+ 2 sum)]
-                        [(fx<=? c #xFFFF) (fx+ 3 sum)]
-                        [(fx<=? c #x1FFFFF) (fx+ 4 sum)]
-                        [else (errorf 'utf8-index->byte-index "Cannot get byte index for ~s" str)])
-                  (fx1+ i))))))
-
-  (define (utf8-index->byte-index index-map index)
-    (fxvector-ref index-map index))    
-
-  (define (byte-index->utf8-index index-map index)
-    (define len (fxvector-length index-map))
-    (call/1cc
-     (lambda (return)
-       (do ([i 0 (fx1+ i)])
-           ((fx=? i len) (return len))
-         (when (fx=? (fxvector-ref index-map i) index)
-           (return i))))))
-
-  (include "definitions.ss")
-
+          (chezure utils)
+          (chezure low-level)
+          (chezure definitions))
+  
   ;;; Compile
   (define (%chezure-compile pattern flags options)
     (unless (string? pattern)

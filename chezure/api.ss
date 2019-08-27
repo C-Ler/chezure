@@ -364,43 +364,41 @@
 
   ;;; Replace
   (define (%chezure-replace chezure str repl limit)
-    
     (define (iter all offset stack)
       (if (null? all)
           (reverse! (cons (substring str offset (string-length str))
                           stack))
-          (let* ([caps (car all)]
-                 [m (vector-ref (captures-matches caps) 0)]
+          (let* ([x (car all)]
+                 [m (if (chezure-match? x)
+                        x
+                        (vector-ref (captures-matches x) 0))]
                  [start (chezure-match-start m)]
                  [end (chezure-match-end m)]
                  [matched (chezure-match-str m)]
                  [slice (substring str offset start)]
-                 [replacement (if (string? repl)
-                                  repl
-                                  (repl caps))])
-            (unless (string? replacement)
-              (errorf 'chezure-replace "the repl procedure doesn't return a string"))            
+                 [replacement (if (string? repl) repl
+                                  (repl x))])
+            (unless (or (string? repl)
+                        (string? replacement))
+              (errorf 'chezure-replace "the repl procedure doesn't return a string"))
             (iter (cdr all) end
                   (cons replacement (cons slice stack))))))
-    
-    (let ([all (chezure-find-captures chezure str limit)])
+    (let* ([finder (if (string? repl) %chezure-find %chezure-find-captures)]
+           [all (finder chezure str limit)])
       (if (null? all)
-          (list)
-          ;; (fold-left string-append ""          
-          ;;            (iter all 0 (list))))))
+          str
           (let* ([lst (iter all 0 (list))]
-                 [len-lst (map string-length lst)]
-                 [total-len (fold-left fx+ 0 len-lst)]
+                 [lens (map string-length lst)]
+                 [total-len (fold-left fx+ 0 lens)]
                  [res (make-string total-len)])
             (let loop ([lst lst]
-                       [len-lst len-lst]
+                       [lens lens]
                        [offset 0])
               (if (null? lst)
                   res
-                  (begin (string-copy! (car lst) 0 res offset (car len-lst))
-                         (loop (cdr lst) (cdr len-lst) (fx+ offset (car len-lst))))))))))
+                  (begin (string-copy! (car lst) 0 res offset (car lens))
+                         (loop (cdr lst) (cdr lens) (fx+ offset (car lens))))))))))                   
                 
-
   (define chezure-replace
     (case-lambda
       [(chezure str repl)

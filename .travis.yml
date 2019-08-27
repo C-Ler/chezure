@@ -33,3 +33,22 @@ before_install:
 
 script:
   - scheme --script "${TRAVIS_BUILD_DIR}/tests.ss"
+
+before_deploy:
+  - rm -rf chezure/*
+  - mv chezure.so chezure
+  - mv librure.* chezure
+  - zip -r chezure.zip chezure
+  - tar czf chezure.tar.gz chezure
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: 
+    - "chezure.zip"
+    - "chezure.tar.gz"
+  skip_cleanup: true
+  # on:
+    # tags: true
+  draft: true
+  overwrite: true

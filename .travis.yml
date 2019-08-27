@@ -34,3 +34,5 @@ before_install:
 
 script:
   - scheme --script "${TRAVIS_BUILD_DIR}/tests.ss"
+  # - mkdir build
+  # - mv chezure.so ./build; mv librure.* ./build  

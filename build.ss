@@ -19,3 +19,11 @@
             ((a6nt ta6nt) "copy")
             (else "cp"))])
   (system (format "~a ./librure/release/~a ./" cp librure)))
+
+;;; compile whole library for distribution
+(parameterize ([optimize-level 2]
+               [compile-imported-libraries #t]
+               [generate-wpo-files #t]
+               [generate-inspector-information #f])
+  (compile-file "chezure.sls")
+  (compile-whole-library "chezure.wpo" "chezure.so"))

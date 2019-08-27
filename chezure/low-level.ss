@@ -28,7 +28,7 @@
     (let ([last-char (string-ref fn1 (fx1- (string-length fn1)))])
       (if (directory-separator? last-char)
           (string-append fn1 fn2)
-          (string-append fn1 (directory-separator) fn2))))
+          (string-append fn1 (string (directory-separator)) fn2))))
   
   (define (search-librure)
     (call/1cc

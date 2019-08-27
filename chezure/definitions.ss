@@ -81,7 +81,7 @@
   (define (chezure-match->alist m)
     (list (cons 'start (chezure-match-start m))
           (cons 'end (chezure-match-end m))
-          (cons 'match (chezure-match-str m))))
+          (cons 'str (chezure-match-str m))))
 
   ;;; Chezure
   (define-record-type (chezure mk-chezure chezure?)

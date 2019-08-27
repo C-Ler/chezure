@@ -17,17 +17,45 @@
        (dynamic-wind
          (lambda () #f)
          (lambda () body)
-         (lambda () cleanup ...))]))
+         (lambda () cleanup ...))]))    
 
   (define (string-not-empty? s)
     (not (or (fxzero? (string-length s))
              (for-all char-whitespace? (string->list s)))))
 
-  (define (substring-bv8 bv start end)
-    (let* ([len (fx- end start)]
-           [new-bv (make-bytevector len)])
-      (bytevector-copy! bv start new-bv 0 len)
-      (utf8->string new-bv)))
+
+  ;;; get the corresponding byte index from a given UTF-8 string
+  ;;; FIXME: maybe there's a better way to do it?
+  (define (make-index-map str)
+    (define len (string-length str))
+    (define indices (make-fxvector len))
+    (let loop ([sum 0]
+               [i 0])
+      (if (fx=? i len)
+          indices
+          (let ([c (char->integer (string-ref str i))])
+            (fxvector-set! indices i sum)
+            (when (fx>? c #x10000)
+              (set! i (fx1+ i))
+              (fxvector-set! indices i sum))
+            (loop (cond [(fx<=? c #x7F) (fx1+ sum)]
+                        [(fx<=? c #x7FF) (fx+ 2 sum)]
+                        [(fx<=? c #xFFFF) (fx+ 3 sum)]
+                        [(fx<=? c #x1FFFFF) (fx+ 4 sum)]
+                        [else (errorf 'utf8-index->byte-index "Cannot get byte index for ~s" str)])
+                  (fx1+ i))))))
+
+  (define (utf8-index->byte-index index-map index)
+    (fxvector-ref index-map index))    
+
+  (define (byte-index->utf8-index index-map index)
+    (define len (fxvector-length index-map))
+    (call/1cc
+     (lambda (return)
+       (do ([i 0 (fx1+ i)])
+           ((fx=? i len) (return len))
+         (when (fx=? (fxvector-ref index-map i) index)
+           (return i))))))
 
   (include "definitions.ss")
 
@@ -219,15 +247,16 @@
   ;;; Shortest Match
   (define (%chezure-shortest-match chezure str start)
     (let* ([bv (string->utf8 str)]
+           [index-map (make-index-map str)]
            [end* (foreign-alloc (foreign-sizeof 'size_t))]
            [matched? (rure_shortest_match (chezure-ptr chezure)
                                           bv (bytevector-length bv)
-                                          start end*)]
+                                          (utf8-index->byte-index index-map start)
+                                          end*)]
            [res (if matched?
-                    (let ([end (foreign-ref 'size_t end* 0)])
-                      (mk-chezure-match start end
-                                        (substring str start end)))
-                    #f)])
+                    (byte-index->utf8-index index-map
+                                            (foreign-ref 'size_t end* 0))
+                    matched?)])
       (foreign-free end*)
       res))
 
@@ -253,6 +282,7 @@
   (define (%chezure-find chezure str limit)
     (let* ([bv (string->utf8 str)]
            [len (bytevector-length bv)]
+           [index-map (make-index-map str)]
            [re* (chezure-ptr chezure)]
            [iter* (rure_iter_new re*)]
            [m* (rure_match_new)])
@@ -262,7 +292,7 @@
                      (fx<? i limit))
                  (rure_iter_next iter* bv len m*))
             (loop (fx1+ i)
-                  (cons (make-chezure-match str m*) res))
+                  (cons (make-chezure-match str index-map m*) res))
             (begin ;; cleanup
               (rure_iter_free iter*)
               (rure_match_free m*)
@@ -324,19 +354,16 @@
 
   ;;; Split
   (define (%chezure-split chezure str limit preserve?)
-
-    (define bv (string->utf8 str))
-    (define len (bytevector-length bv))
     
     (define (iter matches offset stack)
       (if (null? matches)
-          (reverse! (cons (substring-bv8 bv offset len)
+          (reverse! (cons (substring str offset (string-length str))
                           stack))
           (let* ([m (car matches)]
                  [start (chezure-match-start m)]
                  [end (chezure-match-end m)]
                  [matched (chezure-match-str m)]
-                 [slice (substring-bv8 bv offset start)])
+                 [slice (substring str offset start)])
             (iter (cdr matches) end
                   (if preserve?
                       (cons matched (cons slice stack))
@@ -387,20 +414,17 @@
 
   ;;; Replace
   (define (%chezure-replace chezure str repl limit)
-
-    (define bv (string->utf8 str))
-    (define len (bytevector-length bv))
     
     (define (iter all offset stack)
       (if (null? all)
-          (reverse! (cons (substring-bv8 bv offset len)
+          (reverse! (cons (substring str offset (string-length str))
                           stack))
           (let* ([caps (car all)]
                  [m (vector-ref (captures-matches caps) 0)]
                  [start (chezure-match-start m)]
                  [end (chezure-match-end m)]
                  [matched (chezure-match-str m)]
-                 [slice (substring-bv8 bv offset start)]
+                 [slice (substring str offset start)]
                  [replacement (if (string? repl)
                                   repl
                                   (repl caps))])

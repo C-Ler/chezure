@@ -58,13 +58,12 @@
                       (chezure-match-str r))
               p))))
 
-;;; FIXME: instead of allocating a u8 vector everytime, it should take a bytevector as arg
-;;; start and end could be index as in the bytevector, not string
-(define (make-chezure-match str m*)
-  (let ([start (ftype-ref rure_match (start) m*)]
-        [end (ftype-ref rure_match (end) m*)])
-    (mk-chezure-match
-     start end (substring-bv8 (string->utf8 str) start end))))
+(define (make-chezure-match str index-map m*)
+  (let* ([byte-start (ftype-ref rure_match (start) m*)]
+         [byte-end (ftype-ref rure_match (end) m*)]
+         [start (byte-index->utf8-index index-map byte-start)]
+         [end (byte-index->utf8-index index-map byte-end)])
+    (mk-chezure-match start end (substring str start end))))
 
 (define (chezure-match->alist m)
   (list (cons 'start (chezure-match-start m))
@@ -155,7 +154,8 @@
          [indices (map (lambda (nm)
                          (rure_capture_name_index re* nm))
                        names)])
-    (do ([i 0 (fx1+ i)])
+    (do ([index-map (make-index-map str)]
+         [i 0 (fx1+ i)])
         ((fx=? i len)
          (begin (rure_match_free m*)
                 ;; the caller is responsible for releasing caps*
@@ -166,7 +166,7 @@
                  (map (lambda (n i) (cons n i)) names indices)
                  matches)))                       
       (rure_captures_at caps* i m*)
-      (vector-set! matches i (make-chezure-match str m*)))))
+      (vector-set! matches i (make-chezure-match str index-map m*)))))
 
 (define (captures-index-valid? captures index)
   (cond [(string? index)

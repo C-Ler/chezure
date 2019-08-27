@@ -1,7 +1,7 @@
 ;;;; tests.ss
 (import (chezscheme) (chezure) (srfi s78 lightweight-testing))
 
-(check-set-mode! 'report-failed)
+(check-set-mode! 'report)
 
 (define re (chezure-compile "[a-z]+"))
 (define re-i (chezure-compile "[a-z]+" (chezure-flags ignorecase unicode)))
@@ -36,12 +36,18 @@
 ;;; chezure-shortest-match
 (let* ([re (chezure-compile "a+")]
        [str "aaaaab"]
-       [m1 (chezure-shortest-match re str)]
-       [m2 (chezure-shortest-match re str 5)])
-  (check (chezure-match-start m1) => 0)
-  (check (chezure-match-end m1) => 1)
-  (check (chezure-match-str m1) => "a")
-  (check m2 => #f))
+       [res1 (chezure-shortest-match re str)]
+       [res2 (chezure-shortest-match re str 5)])
+  (check res1 => 1)
+  (check res2 => #f))
+
+(let* ([str "中国与香港的关系走向何方？"]
+       [r1 (chezure-shortest-match re-unicode str)]
+       [r2 (chezure-shortest-match re-unicode str 2)]
+       [r3 (chezure-shortest-match re-unicode str 5)])
+  (check r1 => 2)
+  (check r2 => 5)
+  (check r3 => #f))
 
 ;;; chezure-find
 (let ([matches (chezure-find re "abc123def456")])

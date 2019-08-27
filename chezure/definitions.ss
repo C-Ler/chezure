@@ -65,7 +65,7 @@
     (record-writer
      (type-descriptor chezure-match)
      (lambda (r p wr)
-       (display (format "#<chezure-match start=~d, end=~d, string=~s>"
+       (display (format "#<chezure-match start=~d, end=~d, str=~s>"
                         (chezure-match-start r)
                         (chezure-match-end r)
                         (chezure-match-str r))

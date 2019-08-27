@@ -8,7 +8,7 @@ os:
 
 env:
   global:
-    - CHEZSCHEMELIBDIRS="${TRAVIS_BUILD_DIR}:${TRAVIS_BUILD_DIR}/finalize:${TRAVIS_BUILD_DIR}/thunderchez"
+    - CHEZSCHEMELIBDIRS="${TRAVIS_BUILD_DIR}:${TRAVIS_BUILD_DIR}/chez-finalize:${TRAVIS_BUILD_DIR}/thunderchez"
   
 addons:
   homebrew:
@@ -33,4 +33,3 @@ before_install:
 
 script:
   - scheme --script "${TRAVIS_BUILD_DIR}/tests.ss"
-  

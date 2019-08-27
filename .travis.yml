@@ -30,7 +30,7 @@ addons:
 before_install:
   # - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then /bin/bash -e ./.travis/install_chez ; fi
   - /bin/bash -e ./.travis/install_chez
-  - petite --script "${TRAVIS_BUILD_DIR}/build.ss"
+  - scheme --script "${TRAVIS_BUILD_DIR}/build.ss"
 
 script:
   - scheme --script "${TRAVIS_BUILD_DIR}/tests.ss"

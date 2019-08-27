@@ -412,7 +412,7 @@
            (filter string-not-empty? (%chezure-split chezure str limit preserve?))
            (%chezure-split chezure str limit preserve?))]))
 
-  ;;; Replace
+  ;;; Replace  
   (define (%chezure-replace chezure str repl limit)
     
     (define (iter all offset stack)
@@ -436,8 +436,20 @@
     (let ([all (chezure-find-captures chezure str limit)])
       (if (null? all)
           (list)
-          (fold-left string-append ""
-                     (iter all 0 (list))))))
+          ;; (fold-left string-append ""          
+          ;;            (iter all 0 (list))))))
+          (let* ([lst (iter all 0 (list))]
+                 [len-lst (map string-length lst)]
+                 [total-len (fold-left fx+ 0 len-lst)]
+                 [res (make-string total-len)])
+            (let loop ([lst lst]
+                       [len-lst len-lst]
+                       [offset 0])
+              (if (null? lst)
+                  res
+                  (begin (string-copy! (car lst) 0 res offset (car len-lst))
+                         (loop (cdr lst) (cdr len-lst) (fx+ offset (car len-lst))))))))))
+                
 
   (define chezure-replace
     (case-lambda

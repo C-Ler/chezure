@@ -6,6 +6,7 @@
 *.scm#*
 .#*.scm
 
+*.wpo
 *.so
 *.dll
 *.dylib

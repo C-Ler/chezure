@@ -4,7 +4,7 @@
 (check-set-mode! 'report)
 
 (define re (chezure-compile "[a-z]+"))
-(define re-i (chezure-compile "[a-z]+" (chezure-flags ignorecase unicode)))
+(define re-i (chezure-compile "[a-z]+" '(ignorecase unicode)))
 (define re-unicode (chezure-compile "中国|香港"))
 (define re-named (chezure-compile "(?P<year>\\d{4})-(?P<month>\\d{2})-(?P<day>\\d{2})"))
 (define re-named-unicode (chezure-compile "(?P<country>中国|瑞典)\\w+(?P<continent>亚洲|欧洲)\\w+"))

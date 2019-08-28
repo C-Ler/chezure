@@ -13,16 +13,17 @@
   (define (%chezure-compile pattern flags options)
     (unless (string? pattern)
       (assertion-violationf 'chezure-compile "~a is not a string" pattern))
-    (unless (enum-set? flags)
+    (unless (list? flags)
       (assertion-violationf 'chezure-compile "Illegal flags: ~a" flags))
-    (unless (chezure-options? options)
+    (unless (and (list? options)
+                 (fx<? (length options) 3))
       (assertion-violationf 'chezure-compile "Illegal options: ~a" options))
     (let* ([bv (string->utf8 pattern)]
-           [options* (chezure-options-ptr options)]
+           [options* (make-chezure-options options)]
            [error* (rure_error_new)]
            [re* (rure_compile bv
                               (bytevector-length bv)
-                              (chezure-flags->n flags)
+                              (make-chezure-flags flags)
                               options*
                               error*)])
       (unwind-protect
@@ -36,9 +37,9 @@
   (define chezure-compile
     (case-lambda
       [(pattern)
-       (%chezure-compile pattern (chezure-flags) (make-chezure-options))]
+       (%chezure-compile pattern '() '())]
       [(pattern flags)
-       (%chezure-compile pattern flags (make-chezure-options))]
+       (%chezure-compile pattern flags '())]
       [(pattern flags options)
        (%chezure-compile pattern flags options)]))
 
@@ -71,20 +72,21 @@
     (unless (and (list? patterns)
                  (for-all string? patterns))
       (assertion-violationf 'chezure-compile-set "~a is not a list of strings" patterns))
-    (unless (enum-set? flags)
-      (assertion-violationf 'chezure-compile-set "Illegal flags: ~a" flags))
-    (unless (chezure-options? options)
-      (assertion-violationf 'chezure-compile-set "Illegal options: ~a" options))
+    (unless (list? flags)
+      (assertion-violationf 'chezure-compile "Illegal flags: ~a" flags))
+    (unless (and (list? options)
+                 (fx<? (length options) 3))
+      (assertion-violationf 'chezure-compile "Illegal options: ~a" options))
     
     (let* ([bvs (map string->utf8 patterns)]
            [lens (map bytevector-length bvs)]
            [count (length patterns)]
            [patterns* (patterns->pointer bvs lens count)]
            [lens* (lens->pointer lens count)]
-           [options* (chezure-options-ptr options)]
+           [options* (make-chezure-options options)]
            [error* (rure_error_new)]
            [set* (rure_compile_set patterns* lens* count
-                                   (chezure-flags->n flags)
+                                   (make-chezure-flags flags)
                                    options*
                                    error*)])
       (unwind-protect
@@ -100,9 +102,9 @@
   (define chezure-compile-set
     (case-lambda
       [(patterns)
-       (%chezure-compile-set patterns (chezure-flags) (make-chezure-options))]
+       (%chezure-compile-set patterns '() '())]
       [(patterns flags)
-       (%chezure-compile-set patterns flags (make-chezure-options))]
+       (%chezure-compile-set patterns flags '())]
       [(patterns flags options)
        (%chezure-compile-set patterns flags options)]))
 

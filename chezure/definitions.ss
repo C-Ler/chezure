@@ -1,8 +1,7 @@
 ;;; definitions.ss
 (library (chezure definitions)
-  (export chezure-flag chezure-flags chezure-flags->n
-          make-chezure-options chezure-options chezure-options? chezure-options-ptr
-          mk-chezure-match make-chezure-match chezure-match?
+  (export make-chezure-flags make-chezure-options
+          chezure-match? mk-chezure-match make-chezure-match
           chezure-match-start chezure-match-end chezure-match-str chezure-match->alist
           make-chezure chezure? chezure-ptr
           make-chezure-set chezure-set-ptr chezure-set? chezure-set-len
@@ -13,28 +12,27 @@
           (finalize))
   
   ;;; Flags
-  (define-enumeration chezure-flag
-    (ignorecase multiline dotnl swap-greed space unicode)
-    chezure-flags)
+  (define valid-flags
+    (list (cons 'ignorecase RURE_FLAG_CASEI)
+          (cons 'multiline RURE_FLAG_MULTI)
+          (cons 'dotnl RURE_FLAG_DOTNL)
+          (cons 'swap-greed RURE_FLAG_SWAP_GREED)
+          (cons 'space RURE_FLAG_SPACE)
+          (cons 'unicode RURE_FLAG_UNICODE)))
 
-  (define (chezure-flags->n flags)
-    (define (mapper flag)
-      (case flag
-        [(ignorecase) RURE_FLAG_CASEI]
-        [(multiline) RURE_FLAG_MULTI]
-        [(dotnl) RURE_FLAG_DOTNL]
-        [(swap-greed) RURE_FLAG_SWAP_GREED]
-        [(space) RURE_FLAG_SPACE]
-        [(unicode) RURE_FLAG_UNICODE]
-        [else (error 'chezure-flags "Unknown chezure flag: ~a" flag)]))
-
-    (let* ([lst (enum-set->list flags)]
-           [len (length lst)])
-      (cond [(fxzero? len)
-             ;; use RURE_DEFAULT_FLAGS when no args
-             RURE_DEFAULT_FLAGS]
-            [(fx=? len 1) (mapper (car lst))]
-            [else (fold-left logior 0 (map mapper lst))])))
+  (define (chezure-flag? flag)
+    (pair? (assq flag valid-flags)))
+  
+  (define (make-chezure-flags flags)
+    (unless (null? flags)
+      (for-each (lambda (f)
+                  (unless (chezure-flag? f)
+                    (assertion-violationf 'make-chezure-flags "Unknown chezure flag: ~a" f)))
+                flags))
+    (if (null? flags)
+        RURE_DEFAULT_FLAGS
+        (fold-left logior 0
+                   (map (lambda (f) (cdr (assq f valid-flags))) flags))))
 
   ;;; Options
   ;;; https://github.com/rust-lang/regex/blob/master/regex-capi/src/rure.rs#L71
@@ -42,19 +40,19 @@
   (define default-dfa-size-limit (fx* 2 (fxsll 1 20)))
 
   (define-record-type
-      (chezure-options mk-chezure-options chezure-options?)
-    (fields (immutable ptr)))
+      (%chezure-options mk-chezure-options chezure-options?)
+    (fields (immutable ptr chezure-options-ptr)))
 
-  (define make-chezure-options
-    (case-lambda
-      [() (mk-chezure-options 0)]
-      [(size-limit dfa-size-limit)
-       (let ([ptr (rure_options_new)])
-         (rure_options_size_limit ptr size-limit)
-         (rure_options_dfa_size_limit ptr dfa-size-limit)
-         (mk-chezure-options ptr))]))
-  
-  (define chezure-options make-chezure-options)
+  (define (make-chezure-options options)
+    (if (null? options)
+        0 ;; nothing is give
+        (let ([ptr (rure_options_new)])
+          ;; size-limit is give
+          (rure_options_size_limit ptr (car options))
+          (if (fx>? (length options) 1)
+              (rure_options_dfa_size_limit ptr (cadr options)) ;; dfa-size-limit is given
+              (rure_options_dfa_size_limit ptr default-dfa-size-limit)) ;; use default
+          ptr)))
 
   ;;; Match
   (define-record-type (chezure-match mk-chezure-match chezure-match?)

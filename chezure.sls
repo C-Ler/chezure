@@ -4,7 +4,7 @@
           chezure-match? chezure-match-start chezure-match-end chezure-match-str chezure-match->alist
           chezure? chezure-set? chezure-set-len
           captures? captures-names captures-ref captures-string-ref
-          chezure-compile chezure-compile-set chezure-escape
+          chezure-compile chezure-compile-set
           chezure-has-match? chezure-set-has-match? chezure-set-matches chezure-shortest-match
           chezure-find chezure-find-captures chezure-split chezure-replace
           ;; Low-level APIs

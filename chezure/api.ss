@@ -1,6 +1,6 @@
 ;;;; api.ss
 (library (chezure api)
-  (export chezure-compile chezure-compile-set chezure-escape
+  (export chezure-compile chezure-compile-set
           chezure-has-match? chezure-set-has-match? chezure-set-matches chezure-shortest-match
           chezure-find chezure-find-captures chezure-split chezure-replace)
   (import (chezscheme)
@@ -105,11 +105,6 @@
        (%chezure-compile-set patterns flags (make-chezure-options))]
       [(patterns flags options)
        (%chezure-compile-set patterns flags options)]))
-
-  ;;; Escape
-  (define chezure-escape
-    (lambda (pattern)
-      (rure_escape_must pattern)))
 
   ;;; Matched?
   (define (%chezure-has-match? chezure str start)

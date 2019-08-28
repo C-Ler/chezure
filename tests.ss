@@ -22,9 +22,6 @@
 (check (chezure-set-matches re-set "foobar")
        => '(#t #f #t #f #t #t))
 
-;;; chezure-escape
-(check (chezure-escape "^[a-z]+.*$") => "\\^\\[a\\-z\\]\\+\\.\\*\\$")
-
 ;;; chezure-has-match?
 (check (chezure-has-match? re "abc123") => #t)
 (check (chezure-has-match? re "abc123" 3) => #f)

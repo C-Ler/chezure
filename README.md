@@ -112,11 +112,13 @@ Finally, `split` and `replace` are implementted:
 
 ### chezure-compile
 
-procedure: (chezure-compile pattern)\
-procedure: (chezure-compile pattern flags)\
-procedure: (chezure-compile pattern flags options)\
-returns: a `chezure` object holding the compiled regular expression\
+```
+procedure: (chezure-compile pattern)
+procedure: (chezure-compile pattern flags)
+procedure: (chezure-compile pattern flags options)
+returns: a `chezure` object holding the compiled regular expression
 library: (chezure)
+```
 
 `pattern` must be a string, `flags` must be a list of valid flags:
 
@@ -137,30 +139,36 @@ As the predicate of `chezure` type.
 
 ### chezure-match
 
-procedure: (chezure-match? x)\
-procedure: (chezure-match-start x)\
-procedure: (chezure-match-end x)\
-procedure: (chezure-match-str x)\
-procedure: (chezure-match->alist x)\
+```
+procedure: (chezure-match? x)
+procedure: (chezure-match-start x)
+procedure: (chezure-match-end x)
+procedure: (chezure-match-str x)
+procedure: (chezure-match->alist x)
 library: (chezure)
+```
 
 `chezure-match` is an object recording the information of the matched substring. `chezure` exports APIs to access its fields.
 
 ### chezure-has-match?
 
-procedure: (chezure-has-match? chezure str)\
-procedure: (chezure-has-match? chezure str start)\
-returns: a boolean indicating if there exists a match\
+```
+procedure: (chezure-has-match? chezure str)
+procedure: (chezure-has-match? chezure str start)
+returns: a boolean indicating if there exists a match
 library: (chezure)
+```
 
 `chezure-has-match?` returns `#t` if and only if `chezure` matches anywhere in in the given string `str`. `start` is the position at which to start searching, hence it must be a non-negative fixnum. If `start` is not given, `0` will be applied.
 
 ### chezure-shortest-match
 
-procedure: (chezure-shortest-match chezure str)\
-procedure: (chezure-shortest-match chezure str start)\
+```
+procedure: (chezure-shortest-match chezure str)
+procedure: (chezure-shortest-match chezure str start)
 returns: a non-negative fixnum or a boolean
 library: (chezure)
+```
 
 `chezure-shortest-match` returns the `#f` if and only if `chezure` matches nowhere in the given string `str`. Otherwise, if a match is found, then return the `end` location of the given `str`. The end location is the place at which the regex engine determined that a match exists, but may occur before the end of the proper leftmost-first match.
 
@@ -168,47 +176,57 @@ library: (chezure)
 
 ### chezure-find
 
-procedure: (chezure-find chezure str)\
+```
+procedure: (chezure-find chezure str)
 procedure: (chezure-find chezure str limit)
 returns: a list of `chezure-match`, if any
 library: (chezure)
+```
 
 `chezure-find` returns a list of `chezure-match` objects, if `chezure` matches anywhere in the given string `str`. `limit` sets the maximum number of collected `chezure-match`; `0` means no limit at all.
 
 ### captures
 
-procedure: (captures? x)\
+```
+procedure: (captures? x)
 library: (chezure)
+```
 
 A `captures` object represents capturing groups in `chezure`. Internally, it records all group names, captured matches, and how to access those matches by either index or name.
 
 ### captures-names
 
-procedure: (captures-names x)\
-returns: a list of group names\
+```
+procedure: (captures-names x)
+returns: a list of group names
 library: (chezure)
+```
 
 `x` must be either a `chezure` or a `captures` object. `captures-names` returns a list of group names:
 
 ```scheme
-(define re (chezure-compile "(?P<first_name>\\w+) (?P<last_name>\\w+)"))
+(define re (chezure-compile "(?P<first_name\\w+) (?P<last_name>\\w+)"))
 (captures-names re) ;; => ("first_name" "last_name")
 ```
 
 ### chezure-find-captures
 
-procedure: (chezure-find-captures chezure str)\
-procedure: (chezure-find-captures chezure str limit)\
-returns: a list of found `captures`\
+```
+procedure: (chezure-find-captures chezure str)
+procedure: (chezure-find-captures chezure str limit)
+returns: a list of found `captures`
 library: (chezure)
+```
 
 `chezure-find-captures` returns a list of `chezure-captures` objects, if `chezure` find capturing groups anywhere in the given string `str`. `limit` sets the maximum number of collected `chezure-match`; `0` means no limit at all.
 
 ### captures-ref
 
-procedure: (captures-ref caps indices)\
+```
+procedure: (captures-ref caps indices)
 returns: the referenced `chezure-match` object(s)
 library: (chezure)
+```
 
 `caps` must be a `captures` object, indices must be one of these types:
 
@@ -223,19 +241,23 @@ If any index is invalid, an error will be raised.
 
 ### captures-string-ref
 
-procedure: (captures-string-ref caps indices)\
+```
+procedure: (captures-string-ref caps indices)
 returns: the `str` field(s) of the corresponding `chezure-match` object(s)
 library: (chezure)
+```
 
 Like `captures-ref`, but returns the `str` field (s) of the corresponding `chezure-match` object(s).
 
 ### chezure-compile-set
 
-procedure: (chezure-compile-set patterns)\
-procedure: (chezure-compile-set patterns flags)\
-procedure: (chezure-compile-set patterns flags options)\
+```
+procedure: (chezure-compile-set patterns)
+procedure: (chezure-compile-set patterns flags)
+procedure: (chezure-compile-set patterns flags options)
 returns: a `chezure-set` object
 library: (chezure)
+```
 
 Rust's `regex` provides an [API](https://github.com/rust-lang/regex/blob/master/regex-capi/include/rure.h#L24) to compile a set of patterns (a list of strings). `flags` and `options` here are handled the same as in `chezure-compile`. It returns a `chezure-set` object.
 
@@ -245,19 +267,22 @@ As the predicate of `chezure-set` type.
 
 ### chezure-set-has-match?
 
-procedure: (chezure-set-has-match? chezure-set str)\
-procedure: (chezure-set-has-match? chezure-set str start)\
-returns: a boolean indicating if there exists a match\
+```
+procedure: (chezure-set-has-match? chezure-set str)
+procedure: (chezure-set-has-match? chezure-set str start)
+returns: a boolean indicating if there exists a match
 library: (chezure)
-
+```
 `chezure-set-has-match?` returns `#t` if and only if `chezure-set` matches anywhere in in the given string `str`. `start` is the position at which to start searching, hence it must be a non-negative fixnum. If `start` is not given, `0` will be applied.
 
 ### chezure-set-matches
 
-procedure: (chezure-set-matches chezure-set str)\
-procedure: (chezure-set-matches chezure-set str start)\
-returns: a list booleans\
+```
+procedure: (chezure-set-matches chezure-set str)
+procedure: (chezure-set-matches chezure-set str start)
+returns: a list booleans
 library: (chezure)
+```
 
 `chezure-set-matches` compares each regex in the patterns set against the given string `str` and returns a list of booleans indicating the match result of each pattern. 
 
@@ -267,16 +292,20 @@ Booleans are ordered in the same way as the `chezure-set` was compiled. For exam
 
 ### chezure-split
 
-procedure: (chezure-split chezure str)\
-procedure: (chezure-split chezure str limit)\
-procedure: (chezure-split chezure str preserve?)\
-procedure: (chezure-split chezure str preserve? remove-empty?)\
-returns: the splited string\
+```
+procedure: (chezure-split chezure str)
+procedure: (chezure-split chezure str limit)
+procedure: (chezure-split chezure str preserve?)
+procedure: (chezure-split chezure str preserve? remove-empty?)
+returns: the splited string
 library: (chezure)
+```
 
 ### chezure-replace
 
-procedure: (chezure-replace chezure str repl)\
-procedure: (chezure-replace chezure str repl limit)\
-returns: \
+```
+procedure: (chezure-replace chezure str repl)
+procedure: (chezure-replace chezure str repl limit)
+returns: 
 library: (chezure)
+```

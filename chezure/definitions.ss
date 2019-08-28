@@ -1,7 +1,7 @@
 ;;; definitions.ss
 (library (chezure definitions)
   (export chezure-flag chezure-flags chezure-flags->n
-          make-chezure-options chezure-options? chezure-options-ptr
+          make-chezure-options chezure-options chezure-options? chezure-options-ptr
           mk-chezure-match make-chezure-match chezure-match?
           chezure-match-start chezure-match-end chezure-match-str chezure-match->alist
           make-chezure chezure? chezure-ptr
@@ -53,6 +53,8 @@
          (rure_options_size_limit ptr size-limit)
          (rure_options_dfa_size_limit ptr dfa-size-limit)
          (mk-chezure-options ptr))]))
+  
+  (define chezure-options make-chezure-options)
 
   ;;; Match
   (define-record-type (chezure-match mk-chezure-match chezure-match?)

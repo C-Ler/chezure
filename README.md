@@ -35,7 +35,7 @@ now you can use the compiled pattern to search for matches:
 ;; => ((start . 9) (end . 12) (str . "456"))
 ```
 
-A `chezure-match` object records the span information of the matched substring. **Chezure** is also supports unicode strings:
+A `chezure-match` object records the span information of the matched substring. **Chezure** also supports unicode strings:
 
 ```scheme
 (define re (chezure-compile "中国"))
@@ -301,11 +301,17 @@ returns: the splited string
 library: (chezure)
 ```
 
+`chezure-split` splits string `str` by using `chezure`. `limit` sets the maximum number of splited ocurrances; `0` means no limit at all. If `preserve?` is set to `#t`, matched substring will be preserved. If `remove-empty?` is set to `#t`, all empty strings (including strings that only contain whitespace characters) will be filtered out.
+
+`limit`, `preserve` and `remove-empty?` are set to `0`, `#f` and `#f` by default.
+
 ### chezure-replace
 
 ```
 procedure: (chezure-replace chezure str repl)
 procedure: (chezure-replace chezure str repl limit)
-returns: 
+returns: the replaced string
 library: (chezure)
 ```
+
+`chezure-replace` replaces given string `str` by `repl`, which is either a string or a procedure. when `repl` is a procedure, it will be applied to the current `captures` object and expect a string returned to become the actual replacement. `limit` sets the maximum number of splited ocurrances; `0` means no limit at all.

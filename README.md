@@ -4,11 +4,11 @@
 
 Chez Scheme bindings for Rust's [regular expression API](https://crates.io/crates/regex).
 
-Documentation is **still** under construction, and the APIs may be changed.
+[Documentation](https://macdavid313.github.io/chezure) is **still** under construction, and the APIs may be changed.
 
 ## Installation
 
-You can either download the pre-compiled binaries from [release]() or build it by running `build.ss`. Don't forget letting Chez know where is `chezure` and `chez-finalize` libraries, for example:
+You can either download the pre-compiled binaries from [release](https://github.com/macdavid313/chezure/releases) or build it by running `build.ss`. Don't forget letting Chez know where is `chezure` and `chez-finalize` libraries, for example:
 
 ```shell
 > scheme --libdirs '$PROJECT:$PROJECT/chez-finalize' --script build.ss

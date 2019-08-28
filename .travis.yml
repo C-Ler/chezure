@@ -49,7 +49,7 @@ deploy:
     - $DEPLOY_FILE.zip
     - $DEPLOY_FILE.tar.gz
   skip_cleanup: true
-  # on:
-    # tags: true
-  draft: true
+  on:
+    tags: true
+  # draft: true
   overwrite: true

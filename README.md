@@ -30,9 +30,9 @@ now you can use the compiled pattern to search for matches:
 ```scheme
 (define matches (chezure-find re "abc123def456")) ;; a list of chezure-match object
 (chezure-match->alist (car matches))
-;; => ((start . 3) (end . 6) (match . "123"))
+;; => ((start . 3) (end . 6) (str . "123"))
 (chezure-match->alist (cadr matches))
-;; => ((start . 9) (end . 12) (match . "456"))
+;; => ((start . 9) (end . 12) (str . "456"))
 ```
 
 A `chezure-match` object records the span information of the matched substring. **Chezure** is also supports unicode strings:
@@ -41,9 +41,9 @@ A `chezure-match` object records the span information of the matched substring. 
 (define re (chezure-compile "中国"))
 (define matches (chezure-find re "中国是亚洲国家，盐城是中国的一个城市")) ;; a list of chezure-match object
 (chezure-match->alist (car matches))
-;; => ((start . 0) (end . 2) (match . "中国"))
+;; => ((start . 0) (end . 2) (str . "中国"))
 (chezure-match->alist (cadr matches))
-;; => ((start . 11) (end . 13) (match . "中国"))
+;; => ((start . 11) (end . 13) (str . "中国"))
 ```
 
 **Chezure** also implements capturing groups, but it's considered to be slower than ordinary patterns -- as stated by Rust's [API](https://github.com/rust-lang/regex/blob/master/regex-capi/include/rure.h#L71):
@@ -55,19 +55,19 @@ A `chezure-match` object records the span information of the matched substring. 
 (captures-names re) ;; => ("year" "month" "day")
 (define all-captures (chezure-find-captures re "2019-08-17, 1884-10-01")) ;; => a list of captures
 (define caps (car all-captures)) ;; select the first captures
-(captures-ref caps 0) ;; => #<chezure-match start=0, end=10, string="2019-08-17">
-(captures-ref caps 1) ;; => #<chezure-match start=0, end=4, string="2019">
-(captures-ref caps "year") ;; => #<chezure-match start=0, end=4, string="2019">
+(captures-ref caps 0) ;; => #<chezure-match start=0, end=10, str="2019-08-17">
+(captures-ref caps 1) ;; => #<chezure-match start=0, end=4, str="2019">
+(captures-ref caps "year") ;; => #<chezure-match start=0, end=4, str="2019">
 ;; reference by either a list or vector of names or indices
 (captures-ref caps '(0 1 "month" "day")) 
-;; => (#<chezure-match start=0, end=10, string="2019-08-17">
-;;     #<chezure-match start=0, end=4, string="2019">
-;;     #<chezure-match start=5, end=7, string="08">
-;;     #<chezure-match start=8, end=10, string="17">)
+;; => (#<chezure-match start=0, end=10, str="2019-08-17">
+;;     #<chezure-match start=0, end=4, str="2019">
+;;     #<chezure-match start=5, end=7, str="08">
+;;     #<chezure-match start=8, end=10, str="17">)
 (captures-ref caps (vector "year" "month" "day"))
-;; => #(#<chezure-match start=0, end=4, string="2019">
-;;      #<chezure-match start=5, end=7, string="08">
-;;      #<chezure-match start=8, end=10, string="17">)
+;; => #(#<chezure-match start=0, end=4, str="2019">
+;;      #<chezure-match start=5, end=7, str="08">
+;;      #<chezure-match start=8, end=10, str="17">)
 ```
 
 If you just want to access the captured `string`, use `captures-string-ref`:

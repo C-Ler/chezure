@@ -123,6 +123,10 @@
          (assertion-violationf 'chezure-has-match? "~a is not a string" str))     
        (%chezure-has-match? chezure  str 0)]
       [(chezure str start)
+       (unless (chezure? chezure)
+         (assertion-violationf 'chezure-has-match? "~a is not a chezure object" chezure))
+       (unless (string? str)
+         (assertion-violationf 'chezure-has-match? "~a is not a string" str))     
        (unless (and (fixnum? start)
                     (fx<? -1 start (string-length str)))
          (assertion-violationf 'chezure-has-match? "Illegal start index: ~a" start))

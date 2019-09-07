@@ -141,6 +141,7 @@ As the predicate of `chezure` type.
 
 ```
 procedure: (chezure-match? x)
+procedure: (chezure-match-name x)
 procedure: (chezure-match-start x)
 procedure: (chezure-match-end x)
 procedure: (chezure-match-str x)
